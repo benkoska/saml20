@@ -8,14 +8,18 @@ const isMultiCert = (cert) => {
 };
 
 const certToPEM = (cert) => {
+  if (cert.indexOf('BEGIN PUBLIC KEY') !== -1 && cert.indexOf('END PUBLIC KEY') === -1) {
+    return cert;
+  }
+  
   if (cert.indexOf('BEGIN CERTIFICATE') === -1 && cert.indexOf('END CERTIFICATE') === -1) {
     cert = cert.match(/.{1,64}/g).join('\n');
     cert = '-----BEGIN CERTIFICATE-----\n' + cert;
     cert = cert + '\n-----END CERTIFICATE-----\n';
     return cert;
-  } else {
-    return cert;
   }
+  
+  return cert;
 };
 
 const hasValidSignature = (xml, cert, certThumbprint) => {
